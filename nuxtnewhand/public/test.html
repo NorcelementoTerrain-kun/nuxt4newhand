@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuxt 4 动态路由演示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .navigation {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .navigation h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+        
+        .router-view {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+        
+        .route-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .path {
+            font-size: 1.4rem;
+            color: #3498db;
+            background: #f1f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        
+        .user-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            padding: 20px;
+            text-align: center;
+            background: #3498db;
+            color: white;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .param-value {
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+        
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nuxt 4 动态路由演示</h1>
+            <p class="subtitle">本页面展示了如何在Nuxt 4中处理复杂的动态路由，特别是类似<strong>users-[group]/[id]</strong>的路由模式</strong></p>
+        </header>
+        
+        <div class="main-content">
+            <div class="navigation">
+                <h2><i class="fas fa-bars"></i> 路由导航</h2>
+                <div class="nav-item" onclick="changeRoute('developers', '101')">
+                    <i class="fas fa-code"></i>
+                    <span>开发者组 - ID: 101</span>
+                </div>
+                <div class="nav-item" onclick="changeRoute('designers', '202')">
+                    <i class="fas fa-paint-brush"></i>
+                    <span>设计师组 - ID: 202</span>
+                </div>
+                <div class="nav-item" onclick="changeRoute('managers', '303')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>管理组 - ID: 303</span>
+                </div>
+                <div class="nav-item" onclick="changeRoute('analysts', '404')">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>分析师组 - ID: 404</span>
+                </div>
+            </div>
+            
+            <div class="router-view">
+                <div class="route-info">
+                    <h2>当前路由: <span class="param-value" id="currentGroup">未选择</span> - <span class="param-value" id="currentId">未选择</span></h2>
+                    <div class="path" id="routePath">/users/ - /</div>
+                    
+                    <div class="code-block">
+                        // Nuxt 4 路由配置<br>
+                        // 文件位置: app/pages/users-[group]/[id].vue<br><br>
+                        
+                        &lt;template&gt;<br>
+                        &nbsp;&nbsp;&lt;p&gt;{{ '{{ $route.params.group }}' }} - {{ '{{ $route.params.id }}' }}&lt;/p&gt;<br>
+                        &lt;/template&gt;
+                    </div>
+                </div>
+                
+                <div class="user-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>路由参数</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><span class="highlight">Group:</span> <span id="cardGroup">-</span></p>
+                            <p><span class="highlight">ID:</span> <span id="cardId">-</span></p>
+                            <p><span class="highlight">完整路径:</span> <span id="fullPath">/users/-/</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Nuxt 4 特性</h3>
+                        </div>
+                        <div class="card-body">
+                            <p><i class="fas fa-check-circle"></i> 基于文件系统的路由</p>
+                            <p><i class="fas fa-check-circle"></i> 动态路由支持</p>
+                            <p><i class="fas fa-check-circle"></i> 自动代码分割</p>
+                            <p><i class="fas fa-check-circle"></i> 服务器端渲染</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>响应式设计</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>此界面完全响应式，可在各种设备上正常工作</p>
+                            <p>尝试调整浏览器窗口大小查看效果</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Nuxt 4 动态路由示例 &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        function changeRoute(group, id) {
+            // 更新页面内容以反映新路由
+            document.getElementById('currentGroup').textContent = group;
+            document.getElementById('currentId').textContent = id;
+            document.getElementById('routePath').textContent = `//users-${group}/${id}`;
+            document.getElementById('cardGroup').textContent = group;
+            document.getElementById('cardId').textContent = id;
+            document.getElementById('fullPath').textContent = `/users/${group}/${id}`;
+            
+            // 在实际Nuxt应用中，这将是:
+            // window.location.href = `/users-${group}/${id}`;
+            // 或使用Nuxt链接组件进行客户端导航
+        }
+        
+        // 默认加载第一个路由
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => changeRoute('developers', '101'), 500);
+        });
+    </script>
+</body>
+</html>
